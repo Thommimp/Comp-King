@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "623061950830",
+    "project_id": "comp-king",
+    "storage_bucket": "comp-king.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:623061950830:android:e53a79fa8229da0ea7e17f",
+        "android_client_info": {
+          "package_name": "com.example.compking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "623061950830-4lv4hrnsi1ge86c6bbmgb3vs3d068m1m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.compking",
+            "certificate_hash": "4231d0c204568cbb33b2bc4f598c3cc2cf3e1452"
+          }
+        },
+        {
+          "client_id": "623061950830-kjve1r6n7qelifhf1qqhuil3bcid9efp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFyEa-St_xfQ8mK5jNmfF-V2I_Z_OgaaM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "623061950830-kjve1r6n7qelifhf1qqhuil3bcid9efp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

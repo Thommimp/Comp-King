@@ -1,0 +1,73 @@
+package com.example.compking;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.MenuItem;
+
+import com.example.compking.fragments.FavoriteFragment;
+import com.example.compking.fragments.MusicFragment;
+import com.example.compking.fragments.SongFragment;
+import com.example.compking.fragments.StoreFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+public class MainActivity extends AppCompatActivity {
+
+    private BottomNavigationView bottomNavigationView;
+    private Fragment selectorFragment;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_cointer, new MusicFragment()).commit();
+
+
+
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.nav_music:
+                        selectorFragment = new MusicFragment();
+                        break;
+
+                    case R.id.nav_favorite:
+                        selectorFragment = new FavoriteFragment();
+                        break;
+
+
+                    case R.id.nav_store:
+                        selectorFragment = new StoreFragment();
+                        break;
+                }
+               if (selectorFragment != null)  {
+                   getSupportFragmentManager().beginTransaction().replace(R.id.fragment_cointer, selectorFragment).commit();
+
+                }
+
+                return true;
+            }
+        });
+
+      Bundle intent = getIntent().getExtras();
+      if (intent != null) {
+          String songid = intent.getString("id");
+
+          getSharedPreferences("song", MODE_PRIVATE).edit().putString("id", songid).apply();
+          getSupportFragmentManager().beginTransaction().replace(R.id.fragment_cointer, new SongFragment()).commit();
+      }
+
+
+
+
+    }
+}

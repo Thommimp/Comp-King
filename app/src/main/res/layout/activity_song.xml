@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SongActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/button_backgroundblack"/>
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="description"
+        android:layout_marginTop="60dp"
+        android:layout_marginLeft="40dp"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:id="@+id/description"
+        android:textColor="@color/white"/>
+
+    <SeekBar
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/replay"
+        android:id="@+id/seek"
+        android:progressBackgroundTint="#FFFFFF"
+        android:progressTint="#D4AF37"
+        android:thumbTint="@color/white"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/seek"
+        android:text="00:00"
+        android:layout_above="@+id/replay"
+        android:id="@+id/timerend"
+        android:textColor="#D4AF37"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@+id/seek"
+        android:text="00:00"
+        android:layout_above="@+id/replay"
+        android:id="@+id/timerstart"
+        android:textColor="#D4AF37"/>
+
+
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/ic_play"
+        android:layout_centerInParent="true"
+        android:layout_toRightOf="@+id/replay"
+        android:id="@+id/play"/>
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/ic_pause"
+        android:layout_centerInParent="true"
+        android:id="@+id/pause"
+        android:layout_toRightOf="@+id/replay"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="130dp"
+        android:src="@drawable/ic_replay"
+        android:layout_centerVertical="true"
+        android:id="@+id/replay"/>
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_favorite"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="75dp"
+        android:id="@+id/favorite"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add to favorites"
+        android:layout_toEndOf="@+id/favorite"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="90dp"
+        android:paddingLeft="5dp"
+        android:textStyle="bold"/>
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/favorite"
+        android:id="@+id/seekbpm"
+        android:progressBackgroundTint="#FFFFFF"
+        android:progressTint="#D4AF37"
+        android:thumbTint="@color/white"
+        android:layout_marginHorizontal="60dp"
+        android:layout_marginBottom="40dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BPM 100"
+        android:layout_above="@+id/seekbpm"
+        android:textColor="#D4AF37"
+        android:layout_centerHorizontal="true"/>
+
+
+</RelativeLayout>
