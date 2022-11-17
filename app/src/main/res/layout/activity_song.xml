@@ -8,7 +8,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/button_backgroundblack"/>
+        android:background="@color/black"/>
 
 
 
@@ -112,7 +112,8 @@
         android:text="BPM 100"
         android:layout_above="@+id/seekbpm"
         android:textColor="#D4AF37"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:id="@+id/bpmtxt"/>
 
 
 </RelativeLayout>

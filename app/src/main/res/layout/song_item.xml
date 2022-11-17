@@ -2,7 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:padding="10dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/button_backgroundblack">
+
 
     <TextView
         android:layout_width="wrap_content"
@@ -10,7 +12,9 @@
         android:text="bpm"
         android:layout_alignParentRight="true"
         android:layout_marginTop="15dp"
-        android:id="@+id/bpm"/>
+        android:id="@+id/bpm"
+        android:textColor="#D4AF37"/>
+
 
 
     <LinearLayout
@@ -22,11 +26,12 @@
 
 
 
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="#D4AF37"
             android:text="name"
             android:id="@+id/name"/>
 
@@ -34,6 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="auther"
+            android:textColor="#5A5A5A"
             android:id="@+id/auther"
             android:maxLines="5"/>
 

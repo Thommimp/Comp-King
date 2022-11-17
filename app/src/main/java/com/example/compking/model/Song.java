@@ -2,17 +2,16 @@ package com.example.compking.model;
 
 public class Song {
     private String auther;
-    private String bpm;
+    private int bpm;
     private String id;
     private String name;
-
     private String description;
 
     public Song() {
 
     }
 
-    public Song(String auther, String bpm, String id, String name, String description) {
+    public Song(String auther, int bpm, String id, String name, String description) {
         this.auther = auther;
         this.bpm = bpm;
         this.id = id;
@@ -28,11 +27,11 @@ public class Song {
         this.auther = auther;
     }
 
-    public String getBpm() {
+    public int getBpm() {
         return bpm;
     }
 
-    public void setBpm(String bpm) {
+    public void setBpm(int bpm) {
         this.bpm = bpm;
     }
 
@@ -51,7 +50,6 @@ public class Song {
     public void setName(String name) {
         this.name = name;
     }
-
 
     public String getDescription() {
         return description;

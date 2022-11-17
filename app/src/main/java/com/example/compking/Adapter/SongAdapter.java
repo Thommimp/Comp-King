@@ -57,21 +57,23 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull SongAdapter.ViewHolder holder, int position) {
 
-        Song song = mSongs.get(position);
+        final Song song = mSongs.get(position);
+        holder.name.setText(song.getName());
+        holder.auther.setText(song.getAuther());
+        holder.bpm.setText("bpm " + song.getBpm());
 
 
+      //FirebaseFirestore.getInstance().collection("songs").document(song.getId())
+      //        .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+      //            @Override
+      //            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+      //                Song song = value.toObject(Song.class);
+      //                holder.name.setText(song.getName());
+      //                holder.auther.setText(song.getAuther());
+      //                holder.bpm.setText("bpm " + song.getBpm());
 
-        FirebaseFirestore.getInstance().collection("songs").document(song.getId())
-                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                        Song song = value.toObject(Song.class);
-                        holder.name.setText(song.getName());
-                        holder.auther.setText(song.getAuther());
-                        holder.bpm.setText("bpm " + song.getBpm());
-
-                    }
-                });
+      //            }
+      //        });
         lin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -130,6 +132,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
                Intent intent = new Intent(mContext, SongActivity.class);
                intent.putExtra("id", song.getId());
                mContext.startActivity(intent);
+               Toast.makeText(mContext, song.getName(), Toast.LENGTH_SHORT).show();
 
 
 

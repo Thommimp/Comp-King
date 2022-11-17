@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -49,6 +51,8 @@ public class SongActivity extends AppCompatActivity {
     private TextView description;
     private TextView timestart;
     private TextView timeend;
+    private SeekBar seekbpm;
+    private TextView bpm;
 
 
     @Override
@@ -66,7 +70,7 @@ public class SongActivity extends AppCompatActivity {
 
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.button_backgroundgold));
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#D4AF37")));
 
 
         //songId = getApplication().getSharedPreferences("song", Context.MODE_PRIVATE).getString("id", "none");
@@ -92,6 +96,8 @@ public class SongActivity extends AppCompatActivity {
         description = findViewById(R.id.description);
         timeend = findViewById(R.id.timerend);
         timestart = findViewById(R.id.timerstart);
+        seekbpm = findViewById(R.id.seekbpm);
+        bpm = findViewById(R.id.bpmtxt);
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -101,6 +107,28 @@ public class SongActivity extends AppCompatActivity {
                     seekBar.setProgress(i);
                 }
 
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+
+        seekbpm.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                if (b) {
+                    bpm.setText("BPM " + i);
+                    seekbpm.setProgress(i);
+
+                }
             }
 
             @Override
@@ -139,8 +167,13 @@ public class SongActivity extends AppCompatActivity {
         resume.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mediaPlayer.seekTo(0);
-                mediaPlayer.start();
+                    play.setVisibility(View.GONE);
+                    pause.setVisibility(View.VISIBLE);
+                    length = 0;
+                    playsong();
+
+
+
             }
         });
 
@@ -155,14 +188,15 @@ public class SongActivity extends AppCompatActivity {
                     Map<String, Object> map = new HashMap<>();
                     map.put("id", songId);
                     doc.set(map);
-                    //Toast.makeText(getContext(), "Added to favorites", Toast.LENGTH_SHORT).show();
+
+                    Toast.makeText(SongActivity.this, "Added to favorites", Toast.LENGTH_SHORT).show();
                 } else {
                     DocumentReference doc = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                             .collection("favorites").document(songId);
                     doc.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            //Toast.makeText(getContext(), "Deleted from favorites", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SongActivity.this, "Removed from favorites", Toast.LENGTH_SHORT).show();
 
 
                         }
@@ -170,6 +204,7 @@ public class SongActivity extends AppCompatActivity {
                 }
             }
         });
+
 
 
 
@@ -247,13 +282,14 @@ public class SongActivity extends AppCompatActivity {
 
         play.setVisibility(View.GONE);
         pause.setVisibility(View.VISIBLE);
-        if (mediaPlayer.isPlaying()) {
+        if (length != 0) {
             mediaPlayer.seekTo(length);
             mediaPlayer.start();
 
         } else {
 
             try {
+                mediaPlayer.reset();
                 mediaPlayer.setDataSource(getApplication(), downloadurl);
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 mediaPlayer.prepareAsync();
@@ -287,18 +323,6 @@ public class SongActivity extends AppCompatActivity {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     private void songinfo() {
 
         FirebaseFirestore.getInstance().collection("songs").document(songId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -307,6 +331,10 @@ public class SongActivity extends AppCompatActivity {
                 Song song = task.getResult().toObject(Song.class);
                 getSupportActionBar().setTitle(song.getName());
                 description.setText(song.getDescription());
+                seekbpm.setProgress(song.getBpm());
+                bpm.setText("BPM " + String.valueOf(song.getBpm()));
+                seekbpm.setMax(song.getBpm() + 20);
+                seekbpm.setMin(song.getBpm() - 20);
 
                 FirebaseStorage.getInstance().getReference().child("songs/").child(song.getName() + ".mp3")
                         .getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {

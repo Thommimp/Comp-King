@@ -5,6 +5,13 @@
     android:layout_height="match_parent"
     tools:context=".fragments.MusicFragment">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@color/black"/>
+
+
+
 
 
     <com.google.android.material.appbar.AppBarLayout
@@ -13,11 +20,14 @@
         android:id="@+id/bar"
         android:background="?android:attr/windowBackground">
 
+
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/toolbar"
-            android:background="?android:attr/windowBackground">
+            android:background="@color/black">
+
+
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -29,8 +39,11 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Seach..."
-                android:id="@+id/search_bar"/>
+                android:hint="Search..."
+                android:id="@+id/search_bar"
+                android:textColorHint="#D4AF37"
+                android:textColor="#D4AF37"
+                android:backgroundTint="#D4AF37"/>
 
 
         </androidx.appcompat.widget.Toolbar>

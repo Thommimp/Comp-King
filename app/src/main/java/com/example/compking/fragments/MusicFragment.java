@@ -1,10 +1,13 @@
 package com.example.compking.fragments;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,22 +47,23 @@ public class MusicFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_music, container, false);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.button_backgroundgold));
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#D4AF37")));
 
         recyclerViewPosts = view.findViewById(R.id.recycler_view_songs);
         recyclerViewPosts.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        linearLayoutManager.setStackFromEnd(true);
-        linearLayoutManager.setReverseLayout(true);
-        recyclerViewPosts.setLayoutManager(linearLayoutManager);
+       LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+      //linearLayoutManager.setStackFromEnd(true);
+      //linearLayoutManager.setReverseLayout(true);
+       recyclerViewPosts.setLayoutManager(linearLayoutManager);
         songList = new ArrayList<>();
         songAdapter = new SongAdapter(getContext(), songList);
         recyclerViewPosts.setAdapter(songAdapter);
         searchbar = view.findViewById(R.id.search_bar);
 
         readSongs();
+
+
 
         searchbar.addTextChangedListener(new TextWatcher() {
             @Override
@@ -69,8 +73,7 @@ public class MusicFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int i, int i1, int i2) {
-                searchSong(s.toString().toLowerCase(Locale.ROOT));
-
+                searchSong(s.toString());
             }
 
             @Override
@@ -79,6 +82,8 @@ public class MusicFragment extends Fragment {
 
             }
         });
+
+
         return view;
     }
 
@@ -93,26 +98,41 @@ public class MusicFragment extends Fragment {
                 for (DocumentSnapshot ds : value) {
                     Song song = ds.toObject(Song.class);
                     songList.add(song);
-                }
-                songAdapter.notifyDataSetChanged();
-            }
-        });
 
+
+            }
+                songAdapter.notifyDataSetChanged();
+                //upToDate(new ArrayList<>());
+
+        }
+
+    });
     }
 
     private void readSongs() {
-        FirebaseFirestore.getInstance().collection("songs").orderBy("name").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+
+        FirebaseFirestore.getInstance().collection("songs").orderBy("name").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 songList.clear();
-                for (DocumentSnapshot ds: task.getResult()) {
+                for (DocumentSnapshot ds: value) {
                     Song song = ds.toObject(Song.class);
                     songList.add(song);
                 }
                 songAdapter.notifyDataSetChanged();
+                //upToDate(new ArrayList<>());
             }
+
         });
 
 
     }
+
+ //public void upToDate(List<Song> newList){
+ //    songAdapter.notifyDataSetChanged();
+ //    songList = new ArrayList<>();
+ //    songList.addAll(newList);
+
+ //}
+
 }
