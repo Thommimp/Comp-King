@@ -23,6 +23,7 @@ import com.example.compking.Adapter.SongAdapter;
 import com.example.compking.R;
 import com.example.compking.model.Song;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -41,8 +42,10 @@ public class MusicFragment extends Fragment {
     private EditText searchbar;
 
     private RecyclerView recyclerViewPosts;
+
     private SongAdapter songAdapter;
     private List<Song> songList;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,13 +56,13 @@ public class MusicFragment extends Fragment {
         recyclerViewPosts = view.findViewById(R.id.recycler_view_songs);
         recyclerViewPosts.setHasFixedSize(true);
        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-      //linearLayoutManager.setStackFromEnd(true);
-      //linearLayoutManager.setReverseLayout(true);
        recyclerViewPosts.setLayoutManager(linearLayoutManager);
         songList = new ArrayList<>();
         songAdapter = new SongAdapter(getContext(), songList);
         recyclerViewPosts.setAdapter(songAdapter);
         searchbar = view.findViewById(R.id.search_bar);
+
+
 
         readSongs();
 
@@ -69,15 +72,18 @@ public class MusicFragment extends Fragment {
             @Override
             public void beforeTextChanged(CharSequence s, int i, int i1, int i2) {
 
+
             }
 
             @Override
             public void onTextChanged(CharSequence s, int i, int i1, int i2) {
-                searchSong(s.toString());
+
+                searchSong(s.toString().toLowerCase());
             }
 
             @Override
             public void afterTextChanged(Editable s) {
+
 
 
             }
@@ -100,13 +106,10 @@ public class MusicFragment extends Fragment {
                     songList.add(song);
 
 
-            }
+                }
                 songAdapter.notifyDataSetChanged();
-                //upToDate(new ArrayList<>());
-
-        }
-
-    });
+            }
+        });
     }
 
     private void readSongs() {

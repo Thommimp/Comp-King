@@ -9,8 +9,4 @@
         android:icon="@drawable/ic_favorited"
         android:title=""/>
 
-    <item android:id="@+id/nav_store"
-        android:icon="@drawable/ic_store"
-        android:title=""/>
-
 </menu>

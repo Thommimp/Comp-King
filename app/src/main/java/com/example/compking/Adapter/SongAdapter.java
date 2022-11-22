@@ -57,93 +57,37 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull SongAdapter.ViewHolder holder, int position) {
 
-        final Song song = mSongs.get(position);
-        holder.name.setText(song.getName());
-        holder.auther.setText(song.getAuther());
-        holder.bpm.setText("bpm " + song.getBpm());
+        Song song = mSongs.get(position);
+        String id = song.getId();
+       //holder.name.setText(song.getName());
+       //holder.auther.setText(song.getAuther());
+       //holder.bpm.setText("bpm " + song.getBpm());
 
 
-      //FirebaseFirestore.getInstance().collection("songs").document(song.getId())
-      //        .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-      //            @Override
-      //            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-      //                Song song = value.toObject(Song.class);
-      //                holder.name.setText(song.getName());
-      //                holder.auther.setText(song.getAuther());
-      //                holder.bpm.setText("bpm " + song.getBpm());
-
-      //            }
-      //        });
-        lin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-        //    AlertDialog.Builder myAlertBuilder = new AlertDialog.Builder(mContext);
-        //    myAlertBuilder.setTitle(song.getName());
-        //    myAlertBuilder.setMessage("Are you Sure you want to unlock this song, you currently have 1 out of 3 free downloaded songs");
-        //    myAlertBuilder.setPositiveButton("Play", new DialogInterface.OnClickListener() {
-        //        @Override
-        //        public void onClick(DialogInterface dialogInterface, int i) {
-        //            Toast.makeText(mContext, "clicked add", Toast.LENGTH_SHORT).show();
-        //            DocumentReference ref = FirebaseFirestore.getInstance().collection("users")
-        //                    .document(fUser.getCurrentUser().getUid()).collection("Unlocked").document(song.getName());
-        //            Map<String, Object> map = new HashMap<>();
-        //            map.put("Unlocked", song.getName());
-        //            ref.set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-        //                @Override
-        //                public void onComplete(@NonNull Task<Void> task) {
-        //                     Intent intent = new Intent(mContext, MainActivity.class);
-        //                     intent.putExtra("id", song.getId());
-        //                     mContext.startActivity(intent);
-
-           //               }
-           //           });
-           //       }
-           //   });
-
-           //   myAlertBuilder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-           //       @Override
-           //       public void onClick(DialogInterface dialogInterface, int i) {
-           //           Toast.makeText(mContext, "you clicked cancel", Toast.LENGTH_SHORT).show();
-           //       }
-           //   });
-
-           //   myAlertBuilder.setNeutralButton("Favorite", new DialogInterface.OnClickListener() {
-           //       @Override
-           //       public void onClick(DialogInterface dialogInterface, int i) {
-           //           DocumentReference ref = FirebaseFirestore.getInstance().collection("users")
-           //                   .document(fUser.getCurrentUser().getUid()).collection("Favorite").document(song.getName());
-           //           Map<String, Object> map = new HashMap<>();
-           //           map.put("Favorite", song.getName());
-           //           map.put("id", song.getId());
-           //           ref.set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-           //               @Override
-           //               public void onComplete(@NonNull Task<Void> task) {
-           //                   Toast.makeText(mContext, song.getName() + " added to favorites", Toast.LENGTH_SHORT).show();
-           //               }
-           //           });
-
-           //       }
-           //   });
-           //   myAlertBuilder.show();
-              //Intent intent = new Intent(mContext, MainActivity.class);
-              //                     intent.putExtra("id", song.getId());
-              //                     mContext.startActivity(intent);
-
-               Intent intent = new Intent(mContext, SongActivity.class);
-               intent.putExtra("id", song.getId());
-               mContext.startActivity(intent);
-               Toast.makeText(mContext, song.getName(), Toast.LENGTH_SHORT).show();
+      FirebaseFirestore.getInstance().collection("songs").document(song.getId())
+              .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                  @Override
+                  public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                      Song song = value.toObject(Song.class);
+                      holder.name.setText(song.getName());
+                      holder.auther.setText(song.getAuther());
+                      holder.bpm.setText("bpm " + song.getBpm());
 
 
+                  }
+              });
 
+      holder.itemView.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+              Intent intent = new Intent(mContext, SongActivity.class);
+              intent.putExtra("id", song.getId());
+              intent.putExtra("name", song.getName());
+                  mContext.startActivity(intent);
 
+          }
+      });
 
-
-
-
-
-            }
-        });
 
 
 

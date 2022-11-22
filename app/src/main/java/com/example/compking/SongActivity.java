@@ -3,16 +3,27 @@ package com.example.compking;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
+import android.app.Notification;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.media.MediaDescriptionCompat;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaButtonReceiver;
+import android.support.v4.media.session.MediaControllerCompat;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -21,6 +32,7 @@ import android.widget.Toast;
 
 import com.example.compking.model.Song;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -36,7 +48,7 @@ import java.util.Map;
 
 public class SongActivity extends AppCompatActivity {
     public String songId;
-    private TextView songname;
+    private String songName;
     private ImageView play;
     private MediaPlayer mediaPlayer;
     private Uri downloadurl;
@@ -53,12 +65,18 @@ public class SongActivity extends AppCompatActivity {
     private TextView timeend;
     private SeekBar seekbpm;
     private TextView bpm;
+    private int speed;
+    private MediaSessionCompat mMediaSessionCompat;
+    private MediaSession mSession;
+
+
 
 
     @Override
     protected void onDestroy() {
         mediaPlayer.release();
         mediaPlayer = null;
+        downloadurl = null;
         super.onDestroy();
     }
 
@@ -76,6 +94,7 @@ public class SongActivity extends AppCompatActivity {
         //songId = getApplication().getSharedPreferences("song", Context.MODE_PRIVATE).getString("id", "none");
         Intent intent = getIntent();
         songId = intent.getStringExtra("id");
+        songName = intent.getStringExtra("name");
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioAttributes(
                 new AudioAttributes.Builder()
@@ -98,6 +117,16 @@ public class SongActivity extends AppCompatActivity {
         timestart = findViewById(R.id.timerstart);
         seekbpm = findViewById(R.id.seekbpm);
         bpm = findViewById(R.id.bpmtxt);
+
+        getSupportActionBar().setTitle(songName);
+
+
+
+
+
+
+
+
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -125,8 +154,11 @@ public class SongActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 if (b) {
-                    bpm.setText("BPM " + i);
-                    seekbpm.setProgress(i);
+                    bpm.setText("speed " + i/100f + "x");
+                    seekBar.setProgress(i);
+
+
+
 
                 }
             }
@@ -138,6 +170,7 @@ public class SongActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+
 
             }
         });
@@ -161,6 +194,7 @@ public class SongActivity extends AppCompatActivity {
                 pause.setVisibility(View.GONE);
                 mediaPlayer.pause();
                 length = mediaPlayer.getCurrentPosition();
+
             }
         });
 
@@ -170,7 +204,7 @@ public class SongActivity extends AppCompatActivity {
                     play.setVisibility(View.GONE);
                     pause.setVisibility(View.VISIBLE);
                     length = 0;
-                    playsong();
+                playsong();
 
 
 
@@ -187,6 +221,7 @@ public class SongActivity extends AppCompatActivity {
                             .collection("favorites").document(songId);
                     Map<String, Object> map = new HashMap<>();
                     map.put("id", songId);
+                    map.put("name", songName);
                     doc.set(map);
 
                     Toast.makeText(SongActivity.this, "Added to favorites", Toast.LENGTH_SHORT).show();
@@ -223,7 +258,34 @@ public class SongActivity extends AppCompatActivity {
 
 
 
+
     }
+    private class MediaSessionCallback extends MediaSession.Callback {
+        private Context mContext;
+        public MediaSessionCallback(Context context) {
+            super();
+            mContext = context;
+        }
+
+        @Override
+        public void onPlay() {
+            super.onPlay();
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+        }
+
+        @Override
+        public void onStop() {
+            super.onStop();
+        }
+    }
+
+
+
+
 
 
 
@@ -254,26 +316,49 @@ public class SongActivity extends AppCompatActivity {
     }
 
 
+
+
+
+
     public void updateSeekBar() {
         if (mediaPlayer != null) {
+            if (mediaPlayer.isPlaying()) {
+                mediaPlayer.setPlaybackParams(mediaPlayer.getPlaybackParams().setSpeed(seekbpm.getProgress() / 100f));
+                int mCurrentPosition = mediaPlayer.getCurrentPosition();
+                seekBar.setProgress(mCurrentPosition);
+                int secounds = mediaPlayer.getDuration() - mCurrentPosition;
+                timestart.setText(String.valueOf(mCurrentPosition / 1000));
+                timeend.setText(String.valueOf(secounds / 1000));
 
-        int mCurrentPosition = mediaPlayer.getCurrentPosition();
-        seekBar.setProgress(mCurrentPosition);
-        int secounds = mediaPlayer.getDuration() - mCurrentPosition;
-        timestart.setText(String.valueOf(mCurrentPosition / 1000));
-        timeend.setText(String.valueOf(secounds / 1000));
+
+                runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        updateSeekBar();
+                    }
+                };
+
+                handler.postDelayed(runnable, 1000);
+            } else {
+                int mCurrentPosition = mediaPlayer.getCurrentPosition();
+                seekBar.setProgress(mCurrentPosition);
+                int secounds = mediaPlayer.getDuration() - mCurrentPosition;
+                timestart.setText(String.valueOf(mCurrentPosition / 1000));
+                timeend.setText(String.valueOf(secounds / 1000));
 
 
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                updateSeekBar();
+                runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        updateSeekBar();
+                    }
+                };
+
+                handler.postDelayed(runnable, 1000);
+
             }
-        };
 
-        handler.postDelayed(runnable, 1000);
         }
-
     }
 
 
@@ -283,8 +368,10 @@ public class SongActivity extends AppCompatActivity {
         play.setVisibility(View.GONE);
         pause.setVisibility(View.VISIBLE);
         if (length != 0) {
-            mediaPlayer.seekTo(length);
+            mediaPlayer.seekTo(seekBar.getProgress());
             mediaPlayer.start();
+            Toast.makeText(this, "hey", Toast.LENGTH_SHORT).show();
+
 
         } else {
 
@@ -305,6 +392,8 @@ public class SongActivity extends AppCompatActivity {
                     mediaPlayer.start();
                     updateSeekBar();
                     mediaPlayer.setLooping(true);
+
+
                 }
 
             });
@@ -329,21 +418,23 @@ public class SongActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 Song song = task.getResult().toObject(Song.class);
-                getSupportActionBar().setTitle(song.getName());
                 description.setText(song.getDescription());
-                seekbpm.setProgress(song.getBpm());
-                bpm.setText("BPM " + String.valueOf(song.getBpm()));
-                seekbpm.setMax(song.getBpm() + 20);
-                seekbpm.setMin(song.getBpm() - 20);
 
-                FirebaseStorage.getInstance().getReference().child("songs/").child(song.getName() + ".mp3")
-                        .getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Uri> task) {
-                                Toast.makeText(SongActivity.this, "test", Toast.LENGTH_SHORT).show();
-                                downloadurl = task.getResult();
-                            }
-                        });
+                seekbpm.setMax(125);
+                seekbpm.setMin(75);
+                seekbpm.setProgress(100);
+                bpm.setText("Speed " + 1.0 + "x");
+                downloadurl = Uri.parse(song.getDownloadurl());
+
+
+               //FirebaseStorage.getInstance().getReference().child("songs/").child(songName + ".mp3")
+               //        .getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+               //            @Override
+               //            public void onComplete(@NonNull Task<Uri> task) {
+               //                downloadurl = task.getResult();
+               //            }
+               //        });
+
             }
         });
     }

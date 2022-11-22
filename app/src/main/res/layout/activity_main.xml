@@ -23,7 +23,7 @@
             android:id="@+id/bottom_navigation"
             app:itemIconTint="@color/selector"
             app:labelVisibilityMode="unlabeled"
-            android:background="@drawable/button_backgroundblack"
+            android:background="@color/black"
             app:menu="@menu/bottom_menu"/>
 
 

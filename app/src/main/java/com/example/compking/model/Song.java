@@ -6,17 +6,19 @@ public class Song {
     private String id;
     private String name;
     private String description;
+    private String downloadurl;
 
     public Song() {
 
     }
 
-    public Song(String auther, int bpm, String id, String name, String description) {
+    public Song(String auther, int bpm, String id, String name, String description, String downloadurl) {
         this.auther = auther;
         this.bpm = bpm;
         this.id = id;
         this.name = name;
         this.description = description;
+        this.downloadurl = downloadurl;
     }
 
     public String getAuther() {
@@ -57,5 +59,13 @@ public class Song {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getDownloadurl() {
+        return downloadurl;
+    }
+
+    public void setDownloadurl(String downloadurl) {
+        this.downloadurl = downloadurl;
     }
 }

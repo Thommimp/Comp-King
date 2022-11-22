@@ -55,6 +55,7 @@ public class FavoriteFragment extends Fragment {
         songAdapter = new SongAdapter(getContext(), songList);
         recyclerViewPosts.setAdapter(songAdapter);
         searchbar = view.findViewById(R.id.search_bar);
+        favoriteList = new ArrayList<>();
 
         checkFavorite();
 
@@ -81,7 +82,7 @@ public class FavoriteFragment extends Fragment {
     }
 
     private void searchSong(String s) {
-        Query query = FirebaseFirestore.getInstance().collection("songs").orderBy("name").startAt(s)
+        Query query = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).collection("favorites").orderBy("name").startAt(s)
                 .endAt(s + "\uf8ff");
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -91,50 +92,29 @@ public class FavoriteFragment extends Fragment {
                 for (DocumentSnapshot ds : value) {
                     Song song = ds.toObject(Song.class);
                     songList.add(song);
+                    }
+                    songAdapter.notifyDataSetChanged();
                 }
-                songAdapter.notifyDataSetChanged();
-            }
+
         });
 
     }
 
     private void checkFavorite() {
-        favoriteList = new ArrayList<>();
         FirebaseFirestore.getInstance().collection("users")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .collection("favorites").addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        favoriteList.clear();
+                        songList.clear();
                         for (DocumentSnapshot ds : value) {
-                            favoriteList.add(ds.getString("id"));
+                            Song song = ds.toObject(Song.class);
+                            songList.add(song);
                         }
-                        readSongs();
+                        songAdapter.notifyDataSetChanged();
                     }
                 });
 
 
-    }
-
-    private void readSongs() {
-        FirebaseFirestore.getInstance().collection("songs").orderBy("name").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                songList.clear();
-                for (DocumentSnapshot ds : value) {
-                    Song song = ds.toObject(Song.class);
-
-                    for (String id : favoriteList) {
-                        if (song.getId().equals(id)) {
-                            songList.add(song);
-                        }
-
-                    }
-                    songAdapter.notifyDataSetChanged();
-                }
-            }
-
-
-        });
     }
 }

@@ -31,7 +31,8 @@
         android:id="@+id/seek"
         android:progressBackgroundTint="#FFFFFF"
         android:progressTint="#D4AF37"
-        android:thumbTint="@color/white"/>
+        android:thumbTint="@color/white"
+        android:layout_marginBottom="10dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -40,7 +41,8 @@
         android:text="00:00"
         android:layout_above="@+id/replay"
         android:id="@+id/timerend"
-        android:textColor="#D4AF37"/>
+        android:textColor="#D4AF37"
+        android:layout_marginBottom="10dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -49,7 +51,8 @@
         android:text="00:00"
         android:layout_above="@+id/replay"
         android:id="@+id/timerstart"
-        android:textColor="#D4AF37"/>
+        android:textColor="#D4AF37"
+        android:layout_marginBottom="10dp"/>
 
 
 

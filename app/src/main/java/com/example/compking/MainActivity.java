@@ -47,9 +47,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
 
-                    case R.id.nav_store:
-                        selectorFragment = new StoreFragment();
-                        break;
+
                 }
                if (selectorFragment != null)  {
                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_cointer, selectorFragment).commit();
@@ -60,13 +58,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-      Bundle intent = getIntent().getExtras();
-      if (intent != null) {
-          String songid = intent.getString("id");
+    // Bundle intent = getIntent().getExtras();
+    // if (intent != null) {
+    //     String songid = intent.getString("id");
 
-          getSharedPreferences("song", MODE_PRIVATE).edit().putString("id", songid).apply();
-          getSupportFragmentManager().beginTransaction().replace(R.id.fragment_cointer, new SongFragment()).commit();
-      }
+    //     getSharedPreferences("song", MODE_PRIVATE).edit().putString("id", songid).apply();
+    //     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_cointer, new SongFragment()).commit();
+    // }
 
 
 
