@@ -18,12 +18,6 @@ import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.media.MediaDescriptionCompat;
-import android.support.v4.media.MediaMetadataCompat;
-import android.support.v4.media.session.MediaButtonReceiver;
-import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.media.session.MediaSessionCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -66,14 +60,19 @@ public class SongActivity extends AppCompatActivity {
     private SeekBar seekbpm;
     private TextView bpm;
     private int speed;
-    private MediaSessionCompat mMediaSessionCompat;
     private MediaSession mSession;
+    private int ibpm;
+    private String songurl;
+    private String descriptiont;
+    private TextView bpm2;
+
 
 
 
 
     @Override
     protected void onDestroy() {
+        mediaPlayer.pause();
         mediaPlayer.release();
         mediaPlayer = null;
         downloadurl = null;
@@ -85,6 +84,8 @@ public class SongActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_song);
 
+        mSession = new MediaSession(this, "MeadiaSessionTag" );
+
 
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -95,6 +96,12 @@ public class SongActivity extends AppCompatActivity {
         Intent intent = getIntent();
         songId = intent.getStringExtra("id");
         songName = intent.getStringExtra("name");
+        songurl = intent.getStringExtra("downloadurl");
+        ibpm = intent.getIntExtra("bpm", 100);
+        descriptiont = intent.getStringExtra("description");
+
+
+
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioAttributes(
                 new AudioAttributes.Builder()
@@ -117,8 +124,20 @@ public class SongActivity extends AppCompatActivity {
         timestart = findViewById(R.id.timerstart);
         seekbpm = findViewById(R.id.seekbpm);
         bpm = findViewById(R.id.bpmtxt);
+        bpm2 = findViewById(R.id.bpm2txt);
 
-        getSupportActionBar().setTitle(songName);
+        getSupportActionBar().setTitle(songName.substring(0,1).toUpperCase() + songName.substring(1));
+
+        seekbpm.setMax(125);
+        seekbpm.setMin(75);
+        seekbpm.setProgress(100);
+        bpm.setText(ibpm + " BPM");
+        description.setText(descriptiont.substring(0,1).toUpperCase() + descriptiont.substring(1));
+        bpm2.setText(ibpm + " BPM");
+
+
+
+
 
 
 
@@ -132,8 +151,10 @@ public class SongActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 if (b){
-                    mediaPlayer.seekTo(i);
                     seekBar.setProgress(i);
+                    mediaPlayer.pause();
+                    timestart.setText(String.valueOf(seekBar.getProgress() / 1000));
+                    timeend.setText(String.valueOf((seekBar.getMax() - seekBar.getProgress()) / 1000));
                 }
 
             }
@@ -145,6 +166,8 @@ public class SongActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                mediaPlayer.seekTo(seekBar.getProgress());
+                mediaPlayer.start();
 
             }
         });
@@ -154,7 +177,9 @@ public class SongActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 if (b) {
-                    bpm.setText("speed " + i/100f + "x");
+                    double number = ibpm * (i/100f);
+                    int f = (int)number;
+                    bpm.setText(f + " BPM");
                     seekBar.setProgress(i);
 
 
@@ -182,7 +207,15 @@ public class SongActivity extends AppCompatActivity {
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                playsong();
+              mSession.setCallback(new MediaSession.Callback() {
+                  @Override
+                  public void onPlay() {
+                      playsong();
+
+                  }
+              });
+
+
 
             }
         });
@@ -201,14 +234,23 @@ public class SongActivity extends AppCompatActivity {
         resume.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    play.setVisibility(View.GONE);
-                    pause.setVisibility(View.VISIBLE);
-                    length = 0;
-                playsong();
+                play.setVisibility(View.INVISIBLE);
+                pause.setVisibility(View.VISIBLE);
+
+                if (length == 0) {
+                    //playsong();
+
+                } else {
+                    mediaPlayer.seekTo(0);
+                    mediaPlayer.start();
+                }
+
 
 
 
             }
+
+
         });
 
         favorite.setOnClickListener(new View.OnClickListener() {
@@ -252,35 +294,14 @@ public class SongActivity extends AppCompatActivity {
 
 
 
-        songinfo();
+        //songinfo();
         isFavorite();
+        mSession.setActive(true);
 
 
 
 
 
-    }
-    private class MediaSessionCallback extends MediaSession.Callback {
-        private Context mContext;
-        public MediaSessionCallback(Context context) {
-            super();
-            mContext = context;
-        }
-
-        @Override
-        public void onPlay() {
-            super.onPlay();
-        }
-
-        @Override
-        public void onPause() {
-            super.onPause();
-        }
-
-        @Override
-        public void onStop() {
-            super.onStop();
-        }
     }
 
 
@@ -314,6 +335,7 @@ public class SongActivity extends AppCompatActivity {
             }
         });
     }
+    
 
 
 
@@ -365,7 +387,7 @@ public class SongActivity extends AppCompatActivity {
     private void playsong() {
 
 
-        play.setVisibility(View.GONE);
+        play.setVisibility(View.INVISIBLE);
         pause.setVisibility(View.VISIBLE);
         if (length != 0) {
             mediaPlayer.seekTo(seekBar.getProgress());
@@ -375,9 +397,11 @@ public class SongActivity extends AppCompatActivity {
 
         } else {
 
+
+
             try {
                 mediaPlayer.reset();
-                mediaPlayer.setDataSource(getApplication(), downloadurl);
+                mediaPlayer.setDataSource(getApplication(), Uri.parse(songurl));
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 mediaPlayer.prepareAsync();
 
@@ -389,8 +413,9 @@ public class SongActivity extends AppCompatActivity {
                 @Override
                 public void onPrepared(MediaPlayer mediaPlayer) {
                     seekBar.setMax(mediaPlayer.getDuration());
-                    mediaPlayer.start();
                     updateSeekBar();
+                    mediaPlayer.seekTo(seekBar.getProgress());
+                    mediaPlayer.start();
                     mediaPlayer.setLooping(true);
 
 
@@ -412,31 +437,32 @@ public class SongActivity extends AppCompatActivity {
 
 
 
-    private void songinfo() {
+   //private void songinfo() {
 
-        FirebaseFirestore.getInstance().collection("songs").document(songId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                Song song = task.getResult().toObject(Song.class);
-                description.setText(song.getDescription());
+   //    FirebaseFirestore.getInstance().collection("songs").document(songId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+   //        @Override
+   //        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+   //            Song song = task.getResult().toObject(Song.class);
+   //            description.setText(song.getDescription());
+   //            ibpm = song.getBpm();
 
-                seekbpm.setMax(125);
-                seekbpm.setMin(75);
-                seekbpm.setProgress(100);
-                bpm.setText("Speed " + 1.0 + "x");
-                downloadurl = Uri.parse(song.getDownloadurl());
+   //            seekbpm.setMax(125);
+   //            seekbpm.setMin(75);
+   //            seekbpm.setProgress(100);
+   //            bpm.setText(song.getBpm() + " BPM");
+   //            downloadurl = Uri.parse(song.getDownloadurl());
 
 
-               //FirebaseStorage.getInstance().getReference().child("songs/").child(songName + ".mp3")
-               //        .getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-               //            @Override
-               //            public void onComplete(@NonNull Task<Uri> task) {
-               //                downloadurl = task.getResult();
-               //            }
-               //        });
+   //            //FirebaseStorage.getInstance().getReference().child("songs/").child(songName + ".mp3")
+   //            //        .getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+   //            //            @Override
+   //            //            public void onComplete(@NonNull Task<Uri> task) {
+   //            //                downloadurl = task.getResult();
+   //            //            }
+   //            //        });
 
-            }
-        });
-    }
+   //        }
+   //    });
+   //}
 
 }

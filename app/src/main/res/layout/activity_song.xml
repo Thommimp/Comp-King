@@ -11,35 +11,122 @@
         android:background="@color/black"/>
 
 
+    <RelativeLayout
+        android:layout_width="150dp"
+        android:layout_height="100dp"
+        android:background="@drawable/circlebackground"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="35dp"
+        android:id="@+id/Bmin">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="description"
-        android:layout_marginTop="60dp"
-        android:layout_marginLeft="40dp"
-        android:textStyle="bold"
-        android:textSize="20dp"
-        android:id="@+id/description"
-        android:textColor="@color/white"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Key"
+            android:textColor="@color/colorGold"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:textSize="20dp"
+            android:id="@+id/keytxt"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bmin"
+            android:textColor="@color/white"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/keytxt"
+            android:paddingTop="5dp"
+            android:textSize="30dp"
+            android:id="@+id/Key"/>
+
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="150dp"
+        android:layout_height="100dp"
+        android:background="@drawable/circlebackground"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="35dp"
+        android:layout_marginHorizontal="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tempo"
+            android:textColor="@color/colorGold"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:textSize="20dp"
+            android:id="@+id/tempotxt"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="100 BPM"
+            android:textColor="@color/white"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/tempotxt"
+            android:textSize="30dp"
+            android:paddingTop="5dp"
+            android:id="@+id/bpm2txt"/>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@drawable/circlebackground"
+        android:layout_marginHorizontal="20dp"
+        android:layout_below="@+id/Bmin"
+        android:layout_marginTop="40dp"
+        android:id="@+id/laydescription">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description:"
+            android:textColor="@color/colorGold"
+            android:textSize="15sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/description2"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:textColor="@color/white"
+            android:layout_below="@+id/description2"
+            android:textSize="20sp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/description"/>
+
+    </RelativeLayout>
 
     <SeekBar
-        android:layout_width="200dp"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/laydescription"
         android:layout_centerHorizontal="true"
-        android:layout_above="@id/replay"
         android:id="@+id/seek"
         android:progressBackgroundTint="#FFFFFF"
         android:progressTint="#D4AF37"
         android:thumbTint="@color/white"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="35dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toEndOf="@+id/seek"
         android:text="00:00"
-        android:layout_above="@+id/replay"
+        android:layout_below="@+id/laydescription"
+        android:layout_marginTop="35dp"
         android:id="@+id/timerend"
         android:textColor="#D4AF37"
         android:layout_marginBottom="10dp"/>
@@ -49,7 +136,8 @@
         android:layout_height="wrap_content"
         android:layout_toStartOf="@+id/seek"
         android:text="00:00"
-        android:layout_above="@+id/replay"
+        android:layout_below="@+id/laydescription"
+        android:layout_marginTop="35dp"
         android:id="@+id/timerstart"
         android:textColor="#D4AF37"
         android:layout_marginBottom="10dp"/>
@@ -60,25 +148,29 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:src="@drawable/ic_play"
-        android:layout_centerInParent="true"
-        android:layout_toRightOf="@+id/replay"
+        android:layout_below="@+id/seek"
+        android:layout_centerHorizontal="true"
         android:id="@+id/play"/>
     <ImageView
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:src="@drawable/ic_pause"
-        android:layout_centerInParent="true"
-        android:id="@+id/pause"
-        android:layout_toRightOf="@+id/replay"
-        android:visibility="gone"/>
+        android:layout_below="@+id/seek"
+        android:layout_centerHorizontal="true"
+        android:layout_toEndOf="@+id/replay"
+        android:visibility="gone"
+        android:id="@+id/pause"/>
 
     <ImageView
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginLeft="130dp"
+       android:layout_toStartOf="@+id/play"
         android:src="@drawable/ic_replay"
-        android:layout_centerVertical="true"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/seek"
         android:id="@+id/replay"/>
+
+
 
     <ImageView
         android:layout_width="50dp"
@@ -98,23 +190,37 @@
         android:layout_marginBottom="90dp"
         android:paddingLeft="5dp"
         android:textStyle="bold"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tempo"
+        android:textSize="20sp"
+        android:textColor="@color/colorGold"
+        android:layout_above="@+id/seekbpm"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"/>
+
     <SeekBar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/favorite"
         android:id="@+id/seekbpm"
         android:progressBackgroundTint="#FFFFFF"
         android:progressTint="#D4AF37"
         android:thumbTint="@color/white"
         android:layout_marginHorizontal="60dp"
-        android:layout_marginBottom="40dp"/>
+        android:layout_above="@+id/bpmtxt"
+        android:layout_marginBottom="10dp"
+        android:max="3"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="BPM 100"
-        android:layout_above="@+id/seekbpm"
-        android:textColor="#D4AF37"
+        android:textSize="25sp"
+        android:layout_above="@+id/favorite"
+        android:textColor="@color/white"
+        android:layout_marginBottom="20dp"
         android:layout_centerHorizontal="true"
         android:id="@+id/bpmtxt"/>
 

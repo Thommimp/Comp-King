@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class StartActivity extends AppCompatActivity {
 
     private Button register;
+    private Button emailreg;
 
 
     @Override
@@ -20,13 +21,22 @@ public class StartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start);
 
         register = findViewById(R.id.register);
+        emailreg = findViewById(R.id.email);
 
 
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(StartActivity.this, RegisterActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                startActivity(new Intent(StartActivity.this, PhoneRegisterActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            }
+        });
+
+        emailreg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(StartActivity.this, EmailRegisterActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+
             }
         });
 

@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.compking.MainActivity;
 import com.example.compking.R;
 import com.example.compking.SongActivity;
+import com.example.compking.SongActivity2;
+import com.example.compking.VideoPlayActivity;
 import com.example.compking.model.Song;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -33,6 +35,7 @@ import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
@@ -65,24 +68,25 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
 
 
       FirebaseFirestore.getInstance().collection("songs").document(song.getId())
-              .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                  @Override
-                  public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                      Song song = value.toObject(Song.class);
-                      holder.name.setText(song.getName());
-                      holder.auther.setText(song.getAuther());
-                      holder.bpm.setText("bpm " + song.getBpm());
-
-
-                  }
-              });
+                      .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                          @Override
+                          public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                              Song song = value.toObject(Song.class);
+                              holder.name.setText(song.getName().substring(0,1).toUpperCase() + song.getName().substring(1));
+                              holder.auther.setText(song.getAuther());
+                              holder.bpm.setText("bpm " + song.getBpm());
+                          }
+                      });
 
       holder.itemView.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View view) {
-              Intent intent = new Intent(mContext, SongActivity.class);
+              Intent intent = new Intent(mContext, VideoPlayActivity.class);
               intent.putExtra("id", song.getId());
               intent.putExtra("name", song.getName());
+              intent.putExtra("downloadurl", song.getDownloadurl());
+              intent.putExtra("description", song.getDescription());
+              intent.putExtra("bpm", song.getBpm());
                   mContext.startActivity(intent);
 
           }

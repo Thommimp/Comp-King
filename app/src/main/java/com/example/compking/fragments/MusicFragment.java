@@ -50,12 +50,14 @@ public class MusicFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_music, container, false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#D4AF37")));
 
         recyclerViewPosts = view.findViewById(R.id.recycler_view_songs);
         recyclerViewPosts.setHasFixedSize(true);
        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setStackFromEnd(true);
        recyclerViewPosts.setLayoutManager(linearLayoutManager);
         songList = new ArrayList<>();
         songAdapter = new SongAdapter(getContext(), songList);
