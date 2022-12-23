@@ -168,44 +168,44 @@ public class SongActivity2 extends AppCompatActivity {
 
        }
 
-        private void showNotification() {
-            // Create a RemoteViews to customize the notification layout
-            RemoteViews notificationLayout = new RemoteViews(getPackageName(), R.layout.notification_layout);
-
-            // Set the play/pause button on the notification layout
-            if (mMediaPlayer.isPlaying()) {
-                notificationLayout.setImageViewResource(R.id.play_pause_button, R.drawable.ic_pause);
-            } else {
-                notificationLayout.setImageViewResource(R.id.play_pause_button, R.drawable.ic_play);
-            }
-
-            // Set the song name and artist name on the notification layout
-            notificationLayout.setTextViewText(R.id.song_name, songName);
-            //notificationLayout.setTextViewText(R.id.artist_name, "Artist Name");
-
-            // Set the onClickPendingIntent for the play/pause button
-            PendingIntent playPauseIntent = PendingIntent.getBroadcast(this, 0,
-                    new Intent(ACTION_PLAY_PAUSE), PendingIntent.FLAG_UPDATE_CURRENT);
-            notificationLayout.setOnClickPendingIntent(R.id.play_pause_button, playPauseIntent);
-
-            // Set the onClickPendingIntent for the close button
-            PendingIntent closeIntent = PendingIntent.getBroadcast(this, 0,
-                    new Intent(ACTION_CLOSE), PendingIntent.FLAG_UPDATE_CURRENT);
-            //notificationLayout.setOnClickPendingIntent(R.id.close_button, closeIntent);
-
-            // Build the notification
-            Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setSmallIcon(R.drawable.ic_music)
-                    .setContent(notificationLayout)
-                    .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this, SongActivity2.class), 0))
-                    .setAutoCancel(false)
-                    .setOngoing(true)
-                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                    .build();
-
-            // Show the notification
-            NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, notification);
-        }
+        //private void showNotification() {
+        //    // Create a RemoteViews to customize the notification layout
+        //    RemoteViews notificationLayout = new RemoteViews(getPackageName(), R.layout.notification_layout);
+//
+        //    // Set the play/pause button on the notification layout
+        //    if (mMediaPlayer.isPlaying()) {
+        //        notificationLayout.setImageViewResource(R.id.play_pause_button, R.drawable.ic_pause);
+        //    } else {
+        //        notificationLayout.setImageViewResource(R.id.play_pause_button, R.drawable.ic_play);
+        //    }
+//
+        //    // Set the song name and artist name on the notification layout
+        //    notificationLayout.setTextViewText(R.id.song_name, songName);
+        //    //notificationLayout.setTextViewText(R.id.artist_name, "Artist Name");
+//
+        //    // Set the onClickPendingIntent for the play/pause button
+        //    PendingIntent playPauseIntent = PendingIntent.getBroadcast(this, 0,
+        //            new Intent(ACTION_PLAY_PAUSE), PendingIntent.FLAG_UPDATE_CURRENT);
+        //    notificationLayout.setOnClickPendingIntent(R.id.play_pause_button, playPauseIntent);
+//
+        //    // Set the onClickPendingIntent for the close button
+        //    PendingIntent closeIntent = PendingIntent.getBroadcast(this, 0,
+        //            new Intent(ACTION_CLOSE), PendingIntent.FLAG_UPDATE_CURRENT);
+        //    //notificationLayout.setOnClickPendingIntent(R.id.close_button, closeIntent);
+//
+        //    // Build the notification
+        //    Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+        //            .setSmallIcon(R.drawable.ic_music)
+        //            .setContent(notificationLayout)
+        //            .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this, SongActivity2.class), 0))
+        //            .setAutoCancel(false)
+        //            .setOngoing(true)
+        //            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+        //            .build();
+//
+        //    // Show the notification
+        //    NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, notification);
+        //}
 
         private void mediaPlay() {
             registerReceiver(mAudioBecommingNoisy, mNoisyIntentFilter);
