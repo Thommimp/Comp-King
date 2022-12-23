@@ -75,7 +75,6 @@ public class SongActivity extends AppCompatActivity {
         mediaPlayer.pause();
         mediaPlayer.release();
         mediaPlayer = null;
-        downloadurl = null;
         super.onDestroy();
     }
 
@@ -83,8 +82,6 @@ public class SongActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_song);
-
-        mSession = new MediaSession(this, "MeadiaSessionTag" );
 
 
 
@@ -207,16 +204,7 @@ public class SongActivity extends AppCompatActivity {
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              mSession.setCallback(new MediaSession.Callback() {
-                  @Override
-                  public void onPlay() {
-                      playsong();
-
-                  }
-              });
-
-
-
+              playsong();
             }
         });
 
@@ -296,7 +284,7 @@ public class SongActivity extends AppCompatActivity {
 
         //songinfo();
         isFavorite();
-        mSession.setActive(true);
+
 
 
 
