@@ -5,8 +5,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.media.MediaBrowserServiceCompat;
+import androidx.media.session.MediaButtonReceiver;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -15,13 +18,18 @@ import android.graphics.drawable.ColorDrawable;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.browse.MediaBrowser;
+import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.service.media.MediaBrowserService;
+import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -43,15 +51,24 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
 
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.widget.RemoteViews;
 
-public class SongActivity2 extends AppCompatActivity {
+import javax.xml.transform.Result;
 
+public class SongActivity2 extends AppCompatActivity {
+    public static final String ACTION_PLAY_PAUSE = "com.example.compking.ACTION_PLAY_PAUSE";
     private static final String TAG = "SongActivity2";
+    public static final String ACTION_CLOSE = "com.example.compking.ACTION_CLOSE";
+    private static final int NOTIFICATION_ID = 1;
+    private static final String CHANNEL_ID = "channel_01";
+
+
 
 
     private String songId;
@@ -70,6 +87,10 @@ public class SongActivity2 extends AppCompatActivity {
     private TextView bpm2;
     private TextView bpm;
     private TextView description;
+    private SeekBar seekbpm;
+
+
+
 
 
 
@@ -103,17 +124,6 @@ public class SongActivity2 extends AppCompatActivity {
         private AudioBecommingNoisy mAudioBecommingNoisy;
 
 
-
-
-
-
-
-
-
-
-
-
-
         public MediaSessionCallback(Context context) {
             super();
 
@@ -132,11 +142,13 @@ public class SongActivity2 extends AppCompatActivity {
             }
         }
 
+
         @Override
         public void onPlay() {
             super.onPlay();
 
             mediaPlay();
+            //showPlayingNotification();
         }
 
         @Override
@@ -150,7 +162,7 @@ public class SongActivity2 extends AppCompatActivity {
               public void onStop() {
               super.onStop();
 
-              //releaseResources();
+
           }
 
 
@@ -168,44 +180,29 @@ public class SongActivity2 extends AppCompatActivity {
 
        }
 
-        //private void showNotification() {
-        //    // Create a RemoteViews to customize the notification layout
-        //    RemoteViews notificationLayout = new RemoteViews(getPackageName(), R.layout.notification_layout);
-//
-        //    // Set the play/pause button on the notification layout
-        //    if (mMediaPlayer.isPlaying()) {
-        //        notificationLayout.setImageViewResource(R.id.play_pause_button, R.drawable.ic_pause);
-        //    } else {
-        //        notificationLayout.setImageViewResource(R.id.play_pause_button, R.drawable.ic_play);
+
+
+
+        //private void showPlayingNotification() {
+        //    NotificationCompat.Builder builder = MediaStyleHelper.from(mContext, mSession);
+        //    if( builder == null ) {
+        //        return;
         //    }
 //
-        //    // Set the song name and artist name on the notification layout
-        //    notificationLayout.setTextViewText(R.id.song_name, songName);
-        //    //notificationLayout.setTextViewText(R.id.artist_name, "Artist Name");
 //
-        //    // Set the onClickPendingIntent for the play/pause button
-        //    PendingIntent playPauseIntent = PendingIntent.getBroadcast(this, 0,
-        //            new Intent(ACTION_PLAY_PAUSE), PendingIntent.FLAG_UPDATE_CURRENT);
-        //    notificationLayout.setOnClickPendingIntent(R.id.play_pause_button, playPauseIntent);
+        //    builder.addAction(new NotificationCompat.Action(android.R.drawable.ic_media_pause, "Pause", MediaButtonReceiver.buildMediaButtonPendingIntent(mContext, PlaybackStateCompat.ACTION_PLAY_PAUSE)));
+        //   builder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
+        //          .setShowActionsInCompactView(0)
+        //          .setMediaSession(mSession.getSessionToken()));
 //
-        //    // Set the onClickPendingIntent for the close button
-        //    PendingIntent closeIntent = PendingIntent.getBroadcast(this, 0,
-        //            new Intent(ACTION_CLOSE), PendingIntent.FLAG_UPDATE_CURRENT);
-        //    //notificationLayout.setOnClickPendingIntent(R.id.close_button, closeIntent);
 //
-        //    // Build the notification
-        //    Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-        //            .setSmallIcon(R.drawable.ic_music)
-        //            .setContent(notificationLayout)
-        //            .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this, SongActivity2.class), 0))
-        //            .setAutoCancel(false)
-        //            .setOngoing(true)
-        //            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-        //            .build();
 //
-        //    // Show the notification
-        //    NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, notification);
+        //   builder.setSmallIcon(R.mipmap.ic_launcher);
+        //   builder.setCategory(NotificationCompat.CATEGORY_TRANSPORT);
+        //   NotificationManagerCompat.from(mContext).notify(1, builder.build());
         //}
+
+
 
         private void mediaPlay() {
             registerReceiver(mAudioBecommingNoisy, mNoisyIntentFilter);
@@ -217,7 +214,6 @@ public class SongActivity2 extends AppCompatActivity {
                         mMediaPlayer.getCurrentPosition(), 1.0f, SystemClock.elapsedRealtime());
                 mSession.setPlaybackState(mPBuilder.build());
                 mMediaPlayer.start();
-                //updateSeekBar();
             }
         }
 
@@ -231,18 +227,6 @@ public class SongActivity2 extends AppCompatActivity {
             mAudioManager.abandonAudioFocus(this);
             unregisterReceiver(mAudioBecommingNoisy);
         }
-
-
-
-
-
-        //@Override
-        //public void onCompletion(MediaPlayer mediaPlayer) {
-        //    //mPBuilder.setActions(PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_STOP);
-        //    //mPBuilder.setState(PlaybackStateCompat.STATE_STOPPED,
-        //    //        mMediaPlayer.getCurrentPosition(), 1.0f, SystemClock.elapsedRealtime());
-        //    //mSession.setPlaybackState(mPBuilder.build());
-        //}
 
         @Override
         public void onAudioFocusChange(int audioFocusChanged) {
@@ -259,28 +243,6 @@ public class SongActivity2 extends AppCompatActivity {
             }
         }
 
-       //public void updateSeekBar() {
-       //
-
-       //    int mCurrentPosition = mMediaPlayer.getCurrentPosition();
-       //    seekBar.setProgress(mCurrentPosition);
-       //    int secounds = mMediaPlayer.getDuration() - mCurrentPosition;
-       //    timestart.setText(String.valueOf(mCurrentPosition / 1000));
-       //    timeend.setText(String.valueOf(secounds / 1000));
-
-
-       //    runnable = new Runnable() {
-       //        @Override
-       //        public void run() {
-       //            updateSeekBar();
-       //        }
-       //    };
-
-       //    handler.postDelayed(runnable, 1000);
-
-
-
-       //}
 
 
     }
@@ -306,6 +268,9 @@ public class SongActivity2 extends AppCompatActivity {
         descriptiont = intent.getStringExtra("description");
         bpm = findViewById(R.id.bpmtxt);
         bpm2 = findViewById(R.id.bpm2txt);
+        seekbpm = findViewById(R.id.seekbpm);
+
+
 
         getSupportActionBar().setTitle(songName.substring(0,1).toUpperCase() + songName.substring(1));
 
@@ -347,6 +312,10 @@ public class SongActivity2 extends AppCompatActivity {
         description.setText(descriptiont.substring(0,1).toUpperCase() + descriptiont.substring(1));
         bpm2.setText(ibpm + " BPM");
 
+        seekbpm.setMax(125);
+        seekbpm.setMin(75);
+        seekbpm.setProgress(100);
+
 
 
 
@@ -379,6 +348,26 @@ public class SongActivity2 extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 mMediaPlayer.seekTo(seekBar.getProgress());
                 mMediaPlayer.start();
+
+            }
+        });
+
+        seekbpm.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                double number = ibpm * (i/100f);
+                int f = (int)number;
+                bpm.setText(f + " BPM");
+                seekBar.setProgress(i);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
 
             }
         });
@@ -422,6 +411,32 @@ public class SongActivity2 extends AppCompatActivity {
 
     }
 
+    private MediaBrowserCompat.ConnectionCallback mConnectionCallback =
+            new MediaBrowserCompat.ConnectionCallback() {
+                @Override
+                public void onConnected() {
+                    // Code to handle connected event
+                }
+
+                @Override
+                public void onConnectionSuspended() {
+                    // Code to handle connection suspended event
+                }
+
+                @Override
+                public void onConnectionFailed() {
+                    // Code to handle connection failed event
+                }
+            };
+
+
+
+
+
+
+
+
+
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
@@ -449,9 +464,12 @@ public class SongActivity2 extends AppCompatActivity {
     }
 
    public void updateSeekBar() {
+        if (mMediaPlayer.isPlaying()) {
+            mMediaPlayer.setPlaybackParams(mMediaPlayer.getPlaybackParams().setSpeed(seekbpm.getProgress() / 100f));
+        }
 
 
-       int mCurrentPosition = mMediaPlayer.getCurrentPosition();
+            int mCurrentPosition = mMediaPlayer.getCurrentPosition();
                seekBar.setProgress(mCurrentPosition);
                int secounds = mMediaPlayer.getDuration() - mCurrentPosition;
                timestart.setText(String.valueOf(mCurrentPosition / 1000));
@@ -467,9 +485,8 @@ public class SongActivity2 extends AppCompatActivity {
 
                handler.postDelayed(runnable, 1000);
 
+        }
 
-
-   }
 
     public void playPauseClick(View view) {
         if(mController.getPlaybackState().getState() == PlaybackStateCompat.STATE_PLAYING) {
@@ -490,6 +507,8 @@ public class SongActivity2 extends AppCompatActivity {
 
 
 
+
+
     @Override
      protected void onStop() {
 
@@ -504,12 +523,6 @@ public class SongActivity2 extends AppCompatActivity {
             mSession.setActive(false);
         }
 
-        // mController.unregisterCallback(mControllerCallback);
-        // if(mController.getPlaybackState().getState() == PlaybackStateCompat.STATE_PLAYING ||
-        //         mController.getPlaybackState().getState() == PlaybackStateCompat.STATE_PAUSED) {
-        //     mControllerTransportControls.stop();
-        // }
-
          super.onStop();
      }
 
@@ -522,10 +535,15 @@ public class SongActivity2 extends AppCompatActivity {
             // Initialize the media player and start playback
         }
 
-        mController.registerCallback(mControllerCallback);
-        mPBuilder.setActions(PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_PLAY_PAUSE);
-        mSession.setPlaybackState(mPBuilder.build());
+       mController.registerCallback(mControllerCallback);
+       mPBuilder.setActions(PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_PLAY_PAUSE);
+       mSession.setPlaybackState(mPBuilder.build());
+
     }
+
+
+
+
 
     @Override
     protected void onPause() {
@@ -562,5 +580,6 @@ public class SongActivity2 extends AppCompatActivity {
 
 
     }
+
 
 }

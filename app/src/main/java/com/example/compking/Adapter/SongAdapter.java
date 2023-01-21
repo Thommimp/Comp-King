@@ -81,7 +81,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
       holder.itemView.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View view) {
-              Intent intent = new Intent(mContext, SongActivity2.class);
+              Intent intent = new Intent(mContext, VideoPlayActivity.class);
               intent.putExtra("id", song.getId());
               intent.putExtra("name", song.getName());
               intent.putExtra("downloadurl", song.getDownloadurl());
